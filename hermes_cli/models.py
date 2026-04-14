@@ -200,6 +200,11 @@ _PROVIDER_MODELS: dict[str, list[str]] = {
         "mimo-v2-omni",
         "mimo-v2-flash",
     ],
+    "chutes": [
+        "default",
+        "default:latency",
+        "default:throughput",
+    ],
     "opencode-zen": [
         "gpt-5.4-pro",
         "gpt-5.4",
@@ -529,6 +534,7 @@ CANONICAL_PROVIDERS: list[ProviderEntry] = [
     ProviderEntry("ai-gateway",     "AI Gateway",               "extended", "AI Gateway (Vercel — 200+ models, pay-per-use)"),
     ProviderEntry("alibaba",        "Alibaba Cloud (DashScope)","extended", "Alibaba Cloud / DashScope Coding (Qwen + multi-provider)"),
     ProviderEntry("xiaomi",         "Xiaomi MiMo",              "extended", "Xiaomi MiMo (MiMo-V2 models — pro, omni, flash)"),
+    ProviderEntry("chutes",         "Chutes",                   "extended", "Chutes (open-source models, routing, and TEE inference via direct API)"),
 ]
 
 # Derived dicts — used throughout the codebase
@@ -578,6 +584,7 @@ _PROVIDER_ALIASES = {
     "huggingface-hub": "huggingface",
     "mimo": "xiaomi",
     "xiaomi-mimo": "xiaomi",
+    "chutes-ai": "chutes",
     "grok": "xai",
     "x-ai": "xai",
     "x.ai": "xai",

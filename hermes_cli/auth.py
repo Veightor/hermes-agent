@@ -266,6 +266,13 @@ PROVIDER_REGISTRY: Dict[str, ProviderConfig] = {
         api_key_env_vars=("XIAOMI_API_KEY",),
         base_url_env_var="XIAOMI_BASE_URL",
     ),
+    "chutes": ProviderConfig(
+        id="chutes",
+        name="Chutes",
+        auth_type="api_key",
+        inference_base_url="https://llm.chutes.ai/v1",
+        api_key_env_vars=("CHUTES_API_KEY",),
+    ),
 }
 
 
@@ -910,6 +917,7 @@ def resolve_provider(
         "qwen-portal": "qwen-oauth", "qwen-cli": "qwen-oauth", "qwen-oauth": "qwen-oauth",
         "hf": "huggingface", "hugging-face": "huggingface", "huggingface-hub": "huggingface",
         "mimo": "xiaomi", "xiaomi-mimo": "xiaomi",
+        "chutes-ai": "chutes",
         "go": "opencode-go", "opencode-go-sub": "opencode-go",
         "kilo": "kilocode", "kilo-code": "kilocode", "kilo-gateway": "kilocode",
         # Local server aliases — route through the generic custom provider

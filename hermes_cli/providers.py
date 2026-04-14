@@ -136,6 +136,10 @@ HERMES_OVERLAYS: Dict[str, HermesOverlay] = {
         transport="openai_chat",
         base_url_env_var="XIAOMI_BASE_URL",
     ),
+    "chutes": HermesOverlay(
+        transport="openai_chat",
+        base_url_override="https://llm.chutes.ai/v1",
+    ),
 }
 
 
@@ -231,6 +235,9 @@ ALIASES: Dict[str, str] = {
     "mimo": "xiaomi",
     "xiaomi-mimo": "xiaomi",
 
+    # chutes
+    "chutes-ai": "chutes",
+
     # Local server aliases → virtual "local" concept (resolved via user config)
     "lmstudio": "lmstudio",
     "lm-studio": "lmstudio",
@@ -252,6 +259,7 @@ _LABEL_OVERRIDES: Dict[str, str] = {
     "openai-codex": "OpenAI Codex",
     "copilot-acp": "GitHub Copilot ACP",
     "xiaomi": "Xiaomi MiMo",
+    "chutes": "Chutes",
     "local": "Local endpoint",
 }
 

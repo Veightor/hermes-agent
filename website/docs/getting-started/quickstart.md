@@ -54,6 +54,7 @@ hermes setup       # Or configure everything at once
 | **Kimi / Moonshot China** | China-region Moonshot endpoint | Set `KIMI_CN_API_KEY` |
 | **MiniMax** | International MiniMax endpoint | Set `MINIMAX_API_KEY` |
 | **MiniMax China** | China-region MiniMax endpoint | Set `MINIMAX_CN_API_KEY` |
+| **Chutes** | Open-source model routing, TEE inference, and OpenAI-compatible API | Set `CHUTES_API_KEY` |
 | **Alibaba Cloud** | Qwen models via DashScope | Set `DASHSCOPE_API_KEY` |
 | **Hugging Face** | 20+ open models via unified router (Qwen, DeepSeek, Kimi, etc.) | Set `HF_TOKEN` |
 | **Kilo Code** | KiloCode-hosted models | Set `KILOCODE_API_KEY` |
@@ -71,6 +72,10 @@ Hermes Agent requires a model with at least **64,000 tokens** of context. Models
 
 :::tip
 You can switch providers at any time with `hermes model` — no code changes, no lock-in. When configuring a custom endpoint, Hermes will prompt for the context window size and auto-detect it when possible. See [Context Length Detection](../integrations/providers.md#context-length-detection) for details.
+:::
+
+:::info Chutes note
+Chutes uses an API key via `CHUTES_API_KEY` and routes Hermes to `https://llm.chutes.ai/v1`. The built-in provider gets you started directly from `hermes model`; when current model inventory, pricing, TEE status, or supported features matter, use the live models endpoint at `https://llm.chutes.ai/v1/models` as the source of truth.
 :::
 
 ## 3. Start Chatting
