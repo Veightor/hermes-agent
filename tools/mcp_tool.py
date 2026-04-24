@@ -2013,15 +2013,56 @@ def _make_check_fn(server_name: str):
 # Discovery & registration
 # ---------------------------------------------------------------------------
 
+def _normalize_json_schema_node(node):
+    """Return a JSON-Schema-shaped copy of an MCP schema node.
+
+    Some MCP servers publish schemas that are accepted by permissive clients but
+    rejected by strict tool-calling providers.  Notion, for example, has emitted
+    ``additionalProperties: "object"`` even though JSON Schema requires that
+    value to be either a schema object or a boolean.  Normalize these legacy
+    shorthand strings at the source so every provider receives valid JSON
+    Schema.
+    """
+    if isinstance(node, list):
+        return [_normalize_json_schema_node(item) for item in node]
+    if not isinstance(node, dict):
+        return node
+
+    cleaned = {}
+    for key, value in node.items():
+        if key == "additionalProperties":
+            if isinstance(value, (dict, bool)):
+                cleaned[key] = _normalize_json_schema_node(value)
+            elif isinstance(value, str):
+                schema_type = value.strip().lower()
+                if schema_type:
+                    cleaned[key] = _normalize_json_schema_node({"type": schema_type})
+                else:
+                    cleaned[key] = True
+            else:
+                cleaned[key] = True
+            continue
+        cleaned[key] = _normalize_json_schema_node(value)
+
+    if cleaned.get("type") == "object" and "properties" not in cleaned:
+        cleaned["properties"] = {}
+
+    return cleaned
+
+
 def _normalize_mcp_input_schema(schema: dict | None) -> dict:
     """Normalize MCP input schemas for LLM tool-calling compatibility."""
-    if not schema:
+    if not isinstance(schema, dict) or not schema:
         return {"type": "object", "properties": {}}
 
-    if schema.get("type") == "object" and "properties" not in schema:
-        return {**schema, "properties": {}}
-
-    return schema
+    normalized = _normalize_json_schema_node(schema)
+    if not isinstance(normalized, dict):
+        return {"type": "object", "properties": {}}
+    if normalized.get("type") != "object":
+        normalized = {**normalized, "type": "object"}
+    if "properties" not in normalized:
+        normalized = {**normalized, "properties": {}}
+    return normalized
 
 
 def sanitize_mcp_name_component(value: str) -> str:

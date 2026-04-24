@@ -12,6 +12,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from jsonschema import Draft7Validator
 
 
 # ---------------------------------------------------------------------------
@@ -119,6 +120,55 @@ class TestSchemaConversion:
         schema = _convert_mcp_schema("crawl4ai", mcp_tool)
 
         assert schema["parameters"] == {"type": "object", "properties": {}}
+
+    def test_string_additional_properties_gets_normalized_to_valid_json_schema(self):
+        from tools.mcp_tool import _convert_mcp_schema
+
+        mcp_tool = _make_mcp_tool(
+            name="API-create-a-data-source",
+            description="Create a Notion data source",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": "object",
+                    }
+                },
+            },
+        )
+        schema = _convert_mcp_schema("notion", mcp_tool)
+
+        params = schema["parameters"]
+        assert params["properties"]["properties"]["additionalProperties"] == {
+            "type": "object",
+            "properties": {},
+        }
+        Draft7Validator.check_schema(params)
+
+    def test_nested_string_additional_properties_gets_normalized_recursively(self):
+        from tools.mcp_tool import _convert_mcp_schema
+
+        mcp_tool = _make_mcp_tool(
+            name="nested",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": "string",
+                        },
+                    }
+                },
+            },
+        )
+        schema = _convert_mcp_schema("notion", mcp_tool)
+
+        item_schema = schema["parameters"]["properties"]["items"]["items"]
+        assert item_schema["additionalProperties"] == {"type": "string"}
+        Draft7Validator.check_schema(schema["parameters"])
 
     def test_tool_name_prefix_format(self):
         from tools.mcp_tool import _convert_mcp_schema
